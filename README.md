@@ -7,13 +7,13 @@ open-sources emulator for Dofus 1.29.1
 He is written in C#
 
 
-ChangeLog Auth:
-Ajout de la connexion
-Ajout de fil d'attente
-Gestion des MDP/Ban...
-Affichage des server
-Affichage du nb de personnage
-Connection au server de jeu
+ChangeLog Auth:  
+Ajout de la connexion  
+Ajout de fil d'attente  
+Gestion des MDP/Ban...   
+Affichage des server  
+Affichage du nb de personnage  
+Connection au server de jeu  
 
 ChangeLog Auth:
 Ajout des créations / suppressions / sélections personnages
