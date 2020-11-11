@@ -1,6 +1,6 @@
 # Emulateur-Dofus-1.29
 
-========
+
 LeafEmu
 ========
 
@@ -58,7 +58,7 @@ Fight:
     Imposible de faire une action si tour == false  
     
     
-To-Do:  
+## To-Do:  
 Rejoindre uun duel  
 Bien afficher l'entre des combat(Sur bonne cell)  
 Gestion la position des Sorts (Ajouter dans la DB)   
