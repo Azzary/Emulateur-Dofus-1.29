@@ -13,7 +13,7 @@ He is written in C#
 
 
 
-ChangeLog Auth:  
+## ChangeLog Auth:  
 Ajout de la connexion  
 Ajout de fil d'attente  
 Gestion des MDP/Ban...   
@@ -21,7 +21,7 @@ Affichage des server
 Affichage du nb de personnage  
 Connection au server de jeu  
 
-ChangeLog Auth:  
+## ChangeLog World:  
 Ajout des créations / suppressions / sélections personnages  
 Map:  
     Ajout des affichages des maps  
