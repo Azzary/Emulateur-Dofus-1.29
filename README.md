@@ -62,7 +62,7 @@ He is written in C#
 Rejoindre uun duel  
 Bien afficher l'entre des combat(Sur bonne cell)  
 Gestion la position des Sorts (Ajouter dans la DB)   
-Ajout du Multi-Server(Deja presque ajouter manque 2/3 truck)  
+Ajout du Multi-Server(Need 2/3 update)  
 Ajouter Les rez/prospection/Esquive PA - PM  
 Ajouter les items   
 
