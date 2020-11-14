@@ -10,7 +10,8 @@ namespace LeafWorld.Game.Map
             public Dictionary<int, string> CellTp;
 
             public List<int> Cells;
-            public List<Fight.Fight> FightInMap = new List<Fight.Fight>();
+            public Dictionary<int,Fight.Fight> FightInMap = new Dictionary<int, Fight.Fight>();
+
             public List<Network.listenClient> CharactersOnMap;
             public int Id { get; set; }
             public string CreateTime { get; set; }

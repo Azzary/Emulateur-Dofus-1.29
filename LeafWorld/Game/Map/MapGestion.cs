@@ -36,13 +36,23 @@ namespace LeafWorld.Game.Map
         {
             prmClient.send("ÃR");
             account.character.Character character = prmClient.account.character;
-            //For all character in the map GM+...GM+...
-            string packet = $"GM|+{character.cellID};1;-1^0;{character.id};{character.speudo}^-1;{character.classe},~;{character.gfxID}^100;{character.sexe};0,0,0,999,0;{character.couleur1};{character.couleur2};{character.couleur3};null,null,null,null,null,1,;0;;;;;8;;0.0;0;";
+
+            string packet = $"GM|+{character.cellID};1;-1^0;{character.id};{character.speudo}^-1;{character.classe},~;{character.gfxID}^100;{character.sexe};0,0,0,999,0;{character.couleur1};{character.couleur2};{character.couleur3};null,null,null,null,null,1,;0;;;;;8;;0.0;0;" +
+                $"\0{Game.Item.MoveItem.GetItemsPos(prmClient.account.character)}";
 
             prmClient.send(packet);
             if (prmClient.account.character.Map != null)
             {
+                string packet2 = "";
                 Map _map = prmClient.account.character.Map;
+                List<int> keyList = new List<int>(_map.FightInMap.Keys);
+                foreach (int key in keyList)
+                {
+                    if (_map.FightInMap[key].FightStade == 0)
+                    {
+                        packet2 += $"Gc+{_map.FightInMap[key].InfoJoinConbat[4]};0|{_map.FightInMap[key].InfoJoinConbat[0]};{_map.FightInMap[key].InfoJoinConbat[1]};0;-1|{_map.FightInMap[key].InfoJoinConbat[2]};{_map.FightInMap[key].InfoJoinConbat[3]};0;-1";
+                    }
+                }
                 account.character.Character entitie; 
                 for (int i = 0; i < _map.CharactersOnMap.Count; i++)
                 {
@@ -50,7 +60,10 @@ namespace LeafWorld.Game.Map
                     if (entitie.fight.InFight == 0)
                     {
                         prmClient.send($"GM|+{entitie.cellID};1;-1^0;{entitie.id};{entitie.speudo}^-1;{entitie.classe},~;{entitie.gfxID}^100;{entitie.sexe};0,0,0,999,0;{entitie.couleur1};{entitie.couleur2};{entitie.couleur3};null,null,null,null,null,1,;0;;;;;8;;0.0;0;");
+                        prmClient.send(Game.Item.MoveItem.GetItemsPos(entitie));
+                        prmClient.send(packet2); 
                         _map.CharactersOnMap[i].send(packet);
+
                     }
                     
                 }
