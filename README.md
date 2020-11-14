@@ -31,18 +31,18 @@ He is written in C#
 ---> Chat:  
 ------> Destion des different chats  
 ------> Affichage des message  
----> Personnage:
+---> Personnage:  
 ------> Ajout des créations / suppressions / sélections personnages  
 ------> Ajout des stats (vie, force, intel, agi, sagesse)  
-------> Map de depart pour toute les classes
+------> Map de depart pour toute les classes  
 ---> Items:  
-------> Items dans l'inventaire
-------> Sauvgarde del'inventaire
-------> Des/Equiper des items
-------> Gestion des stats des item  si equiper (pas tout)
-------> Affichage des equipements sur la map
-------> Affichage des equipements en combat
----> Sort:  
+------> Items dans l'inventaire  
+------> Sauvgarde del'inventaire  
+------> Des/Equiper des items  
+------> Gestion des stats des item  si equiper (pas tout)  
+------> Affichage des equipements sur la map  
+------> Affichage des equipements en combat  
+---> Sort:    
 ------> Ajout des sorts pour en fonction des classes et du level  
 ------> Ajout du up de level des sorts  
 ---> Caracteristique:  
@@ -68,12 +68,12 @@ He is written in C#
     
     
 ## To-Do:  
-Verif item type pour l'equiper
-Utilisation des sorts
-Gestion la position des Sorts (Ajouter dans la DB)   
-Ajout du Multi-Server(Need 2/3 update)  
-Ajouter Les rez/prospection/Esquive PA - PM  
-pnj
+Verif item type pour l'equiper  
+Utilisation des sorts  
+Gestion la position des Sorts (Ajouter dans la DB)     
+Ajout du Multi-Server(Need 2/3 update)    
+Ajouter Les rez/prospection/Esquive PA - PM    
+pnj  
 
 
     
