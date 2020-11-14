@@ -26,14 +26,13 @@ namespace LeafWorld.Game.Map
 
             if (DateTimeOffset.Now.ToUnixTimeSeconds() < prmClient.account.character.WaitMoving)
             {
-                //prmClient.send($"BN\0GA0; 1;{prmClient.account.character.id}; b{Util.CellToChar(prmClient.account.character.cellID)}");
                 prmClient.send("BN");
                 return;
             }
             prmPacket = prmPacket.Substring(5).Split('\0')[0];
 
             if (!prmClient.account.character.fight.YourTurn && prmClient.account.character.fight.InFight == 2 || !prmClient.account.character.IsAvailable && prmClient.account.character.fight.InFight != 2
-                || prmClient.account.character.fight.InFight == 2 && prmPacket.Length/3 > prmClient.account.character.PM)
+                || prmClient.account.character.fight.InFight == 2 && prmPacket.Length/3 > prmClient.account.character.TotalPM)
             {
                 return;
             }
@@ -82,9 +81,9 @@ namespace LeafWorld.Game.Map
             List<listenClient> CharactersOnMap;
             if (prmClient.account.character.fight.InFight == 2)
             {
-                if (ListCell.Count > prmClient.account.character.PM)
+                if (ListCell.Count > prmClient.account.character.TotalPM)
                     return;
-                prmClient.account.character.PM -= ListCell.Count;
+                prmClient.account.character.TotalPM -= ListCell.Count;
                 chemain += $"\0GA;129;{prmClient.account.character.id};{prmClient.account.character.id},-{ListCell.Count}";
                 CharactersOnMap = prmClient.account.character.fight.EntityInFight;
             }
