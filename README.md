@@ -6,7 +6,7 @@ LeafEmu
 
 
 
-open-sources emulator for Dofus 1.29.1
+open-sources emulator for Dofus Retro
 He is written in C#
 
 
@@ -34,7 +34,14 @@ He is written in C#
 ---> Personnage:
 ------> Ajout des créations / suppressions / sélections personnages  
 ------> Ajout des stats (vie, force, intel, agi, sagesse)  
-------> Map de depart pour toute les classes  
+------> Map de depart pour toute les classes
+---> Items:  
+------> Items dans l'inventaire
+------> Sauvgarde del'inventaire
+------> Des/Equiper des items
+------> Gestion des stats des item  si equiper (pas tout)
+------> Affichage des equipements sur la map
+------> Affichage des equipements en combat
 ---> Sort:  
 ------> Ajout des sorts pour en fonction des classes et du level  
 ------> Ajout du up de level des sorts  
@@ -44,6 +51,8 @@ He is written in C#
 ---> Fight:  
 ------> Demmande de duel  
 ------> Accepter/Refuser un Duel  
+------> Bien afficher l'entre des combat(Sur bonne cell)
+------> Rejoindre un duel
 ------> Imposible de se deplacer en demande  
 ------> Debut du combat  
 ------> Affichage des cells de placement  
@@ -59,12 +68,13 @@ He is written in C#
     
     
 ## To-Do:  
-Rejoindre uun duel  
-Bien afficher l'entre des combat(Sur bonne cell)  
+Verif item type pour l'equiper
+Utilisation des sorts
 Gestion la position des Sorts (Ajouter dans la DB)   
 Ajout du Multi-Server(Need 2/3 update)  
 Ajouter Les rez/prospection/Esquive PA - PM  
-Ajouter les items   
+pnj
+
 
     
     
