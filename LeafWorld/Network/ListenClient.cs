@@ -62,7 +62,7 @@ namespace LeafWorld.Network
                         account.ID = int.Parse(linkServer.ListOfGUID[i][0]);
                         linkServer.ListOfGUID.RemoveAt(i);
                         linkServer.addAccount(account.ID);
-                        database.tablecharacter.getCharacter(this);
+                        database.tablecharacter.LoadCharacter(this);
                         DbLoad = true;
                         send("ATK0");
                         send("ALK10|0");

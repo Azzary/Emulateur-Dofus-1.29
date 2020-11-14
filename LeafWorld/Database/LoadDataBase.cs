@@ -9,6 +9,8 @@ namespace LeafWorld.Database
         public table.Character.Spell tablespells;
         public table.MapTemplate tablemap;
         public table.Experience experience;
+        public table.Invetaire.model_item model_item;
+        public table.Item.items_personnage tableCharacterItems;
         public table.Character.CharacterSpell tableCharacterSpells;
         private int idOfCreation = 1;
         public LoadDataBase()
@@ -24,6 +26,9 @@ namespace LeafWorld.Database
             tableCharacterSpells = new table.Character.CharacterSpell(conn);
             Console.WriteLine("           Spell...");
             tablespells = new table.Character.Spell(conn);
+            Console.WriteLine("           Items...");
+            model_item = new table.Invetaire.model_item(conn);
+            tableCharacterItems = new table.Item.items_personnage(conn);
             Console.WriteLine("           Map...");
             tablemap = new table.MapTemplate(conn);
             Console.WriteLine("           Experience...");

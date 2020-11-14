@@ -24,7 +24,7 @@ namespace LeafWorld.Game.Spell
                         spell.level++;
                         prmClient.send($"SUK{spell.id}~{spell.level}");
                         prmClient.send($"Ak{prmClient.database.experience.ExperienceStat[character.level][0]},{character.XP},{prmClient.database.experience.ExperienceStat[character.level + 1][0]}" +
-                            $"|0|{character.capital}|{character.PSorts}|0~0,0,1,0,0,0|{character.vie},{character.vieTotal}|{character.energie},10000|\0Ab");
+                            $"|0|{character.capital}|{character.PSorts}|0~0,0,1,0,0,0|{character.TotalVie},{character.TotalVie}|{character.energie},10000|\0Ab");
 
                     }
                 }

@@ -8,6 +8,7 @@ namespace LeafWorld.Game.account.character
 {
     public class Fight
     {
+        public int FightID { get; set; }
         public bool YourTurn { get; set; }
         public Network.listenClient RequestDuel { get; set; }
 

@@ -46,7 +46,7 @@ namespace LeafWorld.Game.Character
                 {
                     prmClient.account.character.intell += res;
                 }
-                prmClient.account.character.UpdateCarac();
+                prmClient.account.character.resCaract();
                 prmClient.send(GestionCharacter.createAsPacket(prmClient));
             }
             else

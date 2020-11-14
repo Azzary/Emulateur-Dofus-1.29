@@ -30,7 +30,7 @@ namespace LeafWorld.Game.Character
                 }
                 account.character.Character character = new account.character.Character(prmClient.database.getidOfCreation(), packet[0], 1, 0, gfxID, StartPos[0], StartPos[1], int.Parse(packet[3]),
                     int.Parse(packet[4]), int.Parse(packet[5]), int.Parse(packet[2]), classe, 0, 1000, 0, 0, 999, 99, 50, 10000, 6, 3, 0, 0, 0, 0, 0, true);
-                Game.Spell.SpellTemplate.AddSpell(character);                                               //carac, point sort
+                Game.Spell.SpellTemplate.AddSpell(character);                                             
                 prmClient.account.ListCharacter.Add(character);
             }
             prmClient.send("BN");
@@ -76,35 +76,50 @@ namespace LeafWorld.Game.Character
             prmClient.send(createAsPacket(prmClient));
         }
 
+        public static string CreateStuffPacketOM(listenClient prmClient)
+        {
+            account.character.Character character = prmClient.account.character;
+            StringBuilder packet = new StringBuilder("OS+5|");
+            for (int i = 0; i < character.Invertaire.Stuff.Count; i++)
+            {
+                if (character.Invertaire.Stuff[i].Position != -1)
+                {
+                    packet.Append($"{character.Invertaire.Stuff[i].ID}|");
+                }
+            }
+            return packet.ToString();
+        }
+
         public static string createAsPacket(listenClient prmClient)
         {
             account.character.Character character = prmClient.account.character;
-            
-            String packet = $"As{character.XP},{prmClient.database.experience.ExperienceStat[character.level][0]},{prmClient.database.experience.ExperienceStat[character.level+1][0]}|" +
+            StringBuilder packet = new StringBuilder();
+            character.UpdateEquipentStats();
+            packet.Append($"As{character.XP},{prmClient.database.experience.ExperienceStat[character.level][0]},{prmClient.database.experience.ExperienceStat[character.level+1][0]}|" +
                 $"{character.kamas}|" +
                 $"{character.capital}|" +
                 $"{character.PSorts}|" +
                 $"0|" +
-                $"{character.vie},{character.vieTotal}|" +
+                $"{character.vie},{character.TotalVie}|" +
                 $"{character.energie},10000|" +
                 $"10|" +
                 $"10|" +
-                $"{character.PA},0,0,0,{character.PA}|" +
-                $"{character.PM},0,0,0,{character.PM}|" +
-                $"{character.force},0,0,0|" +
-                $"{character.vie},{character.CaracVie},0,0|" +
-                $"{character.sagesse},0,0,0|" +
-                $"{character.chance},0,0,0|" +
-                $"{character.agi},0,0,0|" +
-                $"{character.intell},0,0,0|" +
+                $"{character.PA},{character.EquipementPA},0,0,{character.TotalPA}|" +
+                $"{character.PM},{character.EquipementPM},0,0,{character.TotalPM}|" +
+                $"{character.force},{character.EquipementForce},0,{character.TotalForce}|" +
+                $"{character},{character.EquipementVie},0,{character.TotalVie}|" +
+                $"{character.sagesse},{character.EquipementSagesse},0,{character.TotalSagesse}|" +
+                $"{character.chance},{character.EquipementChance},0,{character.TotalChance}|" +
+                $"{character.agi},{character.EquipementAgi},0,{character.TotalAgi}|" +
+                $"{character.intell},{character.EquipementIntell},0,{character.TotalIntell}|" +
                 $"{character.PO},0,0,0|" +
-                $"{character.invo},0,0,0|";
+                $"{character.invo},0,0,0|");
             for (int i = 0; i < 32; i++)
             {
-                packet += "0,0,0,0,0|";
+                packet.Append("0,0,0,0,0|");
             }
-            packet += "\0Ab";
-            return packet;
+            packet.Append("\0Ab");
+            return packet.ToString();
         }
 
         [PacketAttribute("AS")]
@@ -119,12 +134,11 @@ namespace LeafWorld.Game.Character
                         prmClient.account.character = character;
                         prmClient.CharacterInWorld.Add(prmClient);
                         prmClient.send("Rx0");
-                        prmClient.send($"ASK|{id}|{character.speudo}|{character.level}|{character.classe}|{character.sexe}|{character.gfxID}" +
-                            $"|{character.couleur1}|{character.couleur2}|{character.couleur3}|");
+                        prmClient.send(CreateASKPacket(character));
                         prmClient.send("ZS0");
                         CreateSpellPacket(prmClient);
                         prmClient.send($"Ow{character.pods}|{character.podsMax}\0Os");
-                        prmClient.send("FO+\0Im189\0Im0152;2020~10~21~13~4~118.179.233.91\0Im0153;118.179.233.91");
+                        prmClient.send("FO+\0Im189\0Im0152;2020~10~21~13~4~none\0Im0153;none");
                         prmClient.send("al|0;0|1;1|2;1|3;1|4;1|5;1|6;1|7;1|8;1|9;1|10;1|11;1|12;1|13;1|14;1|15;1|16;1|17;1|18;1|19;1|20;1|21;1|22;1|23;1|25;1|26;1|27;1|28;1|29;1|30;1|31;1|32;1|33;1|34;1|35;1|37;1|38;1|39;0|41;1|42;0|43;1|44;1|45;1|46;1|47;1|48;1|49;1|50;1|51;1");
                     }
                 }
@@ -132,6 +146,24 @@ namespace LeafWorld.Game.Character
             else          
                 ListCharacter(prmClient, prmPacket);
 
+        }
+
+        public static string CreateASKPacket(Game.account.character.Character character)
+        {
+           // return "ASK|1257|Lorel|5|9|0|90|-1|-1|-1|2a5d5~9a9~1~~3d7#7e5#6e#92f,76#2#0#0#0d0+2,77#2#0#0#0d0+2,7b#2#0#0#0d0+2,7c#2#0#0#0d0+2,7e#2#0#0#0d0+2~0;2a5d6~9aa~1~~3d7#7e5#6e#92f,76#2#0#0#0d0+2,77#2#0#0#0d0+2,7b#2#0#0#0d0+2,7c#2#0#0#0d0+2,7e#2#0#0#0d0+2~0;2a5d7~9ab~1~~3d7#7e5#6e#92f,76#2#0#0#0d0+2,77#2#0#0#0d0+2,7b#2#0#0#0d0+2,7c#2#0#0#0d0+2,7e#2#0#0#0d0+2~0;2a5d8~9ac~1~~3d7#7e5#6e#92f,76#2#0#0#0d0+2,77#2#0#0#0d0+2,7b#2#0#0#0d0+2,7c#2#0#0#0d0+2,7e#2#0#0#0d0+2~0;2a5d9~9ad~1~~3d7#7e5#6e#92f,76#2#0#0#0d0+2,77#2#0#0#0d0+2,7b#2#0#0#0d0+2,7c#2#0#0#0d0+2,7e#2#0#0#0d0+2~0;2a5da~9ae~1~~3d7#7e5#6e#92f,76#2#0#0#0d0+2,77#2#0#0#0d0+2,7b#2#0#0#0d0+2,7c#2#0#0#0d0+2,7e#2#0#0#0d0+2~0;35b79~133~6~~~1;35b7a~2161~2~~~1;35b7b~173~2~~~10;35b7c~181~6~~~0;35b7d~374~9~~~0;35b7e~16058~1~~~0;35b7f~375~6~~~0;35b80~207~1~~~101;35b81~97c~1~~9e#11d#0#0#0d0+285~12; ";    
+           
+                
+                StringBuilder packet = new StringBuilder($"ASK|{character.id}|{character.speudo}|{character.level}|{character.classe}|{character.sexe}|{character.gfxID}|{character.couleur1}|{character.couleur2}|{character.couleur3}|");
+
+            for (int i = 0; i < character.Invertaire.Stuff.Count; i++)
+            {
+
+                packet.Append($"{character.Invertaire.Stuff[i].UID.ToString("X")}~{character.Invertaire.Stuff[i].ID.ToString("X")}~1~{character.Invertaire.Stuff[i].Position}~{character.Invertaire.Stuff[i].Stats};");
+                
+                    
+
+            }
+            return packet.ToString();
         }
 
         public static void CreateSpellPacket(listenClient prmClient)

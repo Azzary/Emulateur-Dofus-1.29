@@ -47,6 +47,11 @@ namespace LeafWorld.Network
                 listenClient li = new listenClient(socketClient, DataBase, queue, linkServer, CharacterInWorld);
                 new Thread(ThreadlistenClient).Start(li);
                 queue.Add(li);
+                if (queue.Count == 0)
+                {
+                    new Thread(wait_queue).Start();
+                }
+
 
             }
 
@@ -83,7 +88,7 @@ namespace LeafWorld.Network
 
         private void wait_queue()
         {
-            new Thread(send_af).Start();
+            //new Thread(send_af).Start();
             while (!sauvegarde)
             {
                 if (queue.Count > 0)
@@ -111,7 +116,7 @@ namespace LeafWorld.Network
 
                         nbclient++;
                         Console.WriteLine($"Client");
-                        
+
                     }
                     else
                     {
@@ -141,6 +146,10 @@ namespace LeafWorld.Network
             li.remove(li);
             ListSauvegarde.Add(li);
             queue.Add(li);
+            if (queue.Count == 0)
+            {
+                new Thread(wait_queue).Start();
+            }
 
         }
     }
