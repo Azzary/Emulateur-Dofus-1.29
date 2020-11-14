@@ -88,7 +88,7 @@ namespace LeafWorld.Database.table.Character
 
         }
 
-        public void getCharacter(listenClient prmClient)
+        public void LoadCharacter(listenClient prmClient)
         {
             string r = "SELECT id, speudo, level, gfxID, classe," +
             " couleur1, couleur2, couleur3, isDead, mapID, cellID," +
@@ -129,6 +129,7 @@ namespace LeafWorld.Database.table.Character
 
                 Reader.Close();
                 prmClient.database.tableCharacterSpells.LoadSpells(prmClient);
+                prmClient.database.tableCharacterItems.LoadItems(prmClient);
 
             }
         }
@@ -183,7 +184,43 @@ namespace LeafWorld.Database.table.Character
                 removeSpell(item.id);
                 CreateCharacter(prmClient.account.ID, item);
                 AddSpells(item.id, item.SpellsCharacter);
+                removeItems(item.id);
+                UpdateItems(item.id, item.Invertaire.Stuff);
             }
+        }
+
+        private void removeItems(int id)
+        {
+            string r = "DELETE from items_personnage WHERE" +
+             " personnageid='" + id + "';";
+            using (MySqlCommand commande = new MySqlCommand(r, conn))
+            {
+                MySqlDataReader Reader = commande.ExecuteReader();
+                Reader.Close();
+            }
+
+        }
+
+        private void UpdateItems(int id, List<Game.Item.Stuff> Inv)
+        {
+            string r = "";
+            foreach (Game.Item.Stuff item in Inv)
+            {
+                r += $"INSERT INTO items_personnage SET personnageid= {id} ,modelid= {item.ID},stats= '{item.Stats}', objectif= 0 , price = 0 , position = {item.Position};";
+
+
+            }
+            if (r == "")
+                return;
+
+
+            using (MySqlCommand commande = new MySqlCommand(r, conn))
+            {
+
+                MySqlDataReader Reader = commande.ExecuteReader();
+                Reader.Close();
+            }
+
         }
 
         public void removeCharacter(string id)
