@@ -9,21 +9,35 @@ namespace LeafWorld.Game.Fight
 {
     public class Fight
     {
-        List<listenClient> ListEntity;
-        string GTLpacket;
-        public Fight(List<listenClient> _ListEntity, string _GTLpacket)
+        public List<listenClient> ListEntity;
+        public string GTLpacket { get; set; }
+        public int FightStade { get; set; }
+        public bool FightRuning { get; set; }
+        public int[] InfoJoinConbat { get; set; }
+        public Fight(List<listenClient> _ListEntity)
         {
-            GTLpacket = _GTLpacket;
             ListEntity = _ListEntity;
+            FightRuning = true;
         }
         public Fight()
-        {}
+        {
+            FightRuning = true;
+        }
 
         public void start()
         {
+            for (int i = 0; i < ListEntity[0].account.character.Map.CharactersOnMap.Count; i++)
+            {
+                if (ListEntity.Contains(ListEntity[0].account.character.Map.CharactersOnMap[i]))
+                {
+                    continue;
+                }
+                ListEntity[0].account.character.Map.CharactersOnMap[i].send("Gc-"+ ListEntity[0].account.character.fight.FightID);
+                //\0
+            }
             listenClient TourEntity;
             int pos = 0;
-            while (true)
+            while (FightRuning)
             {
                 TourEntity = ListEntity[pos];
                 while (true)
@@ -64,7 +78,7 @@ namespace LeafWorld.Game.Fight
                         break;
                     }
                 }
-                TourEntity.account.character.resCaract();
+                TourEntity.account.character.UpdateStat();
             }
         }
 
@@ -78,7 +92,7 @@ namespace LeafWorld.Game.Fight
 
 
                     //GTM|1257;0;50;6;3;368;;50;0;0;0,0,0,0,0,0,0,|998;0;50;6;3;444;;50;0;0;0,0,0,0,0,0,0,\0
-                GTMpacket += $"{Character.id};0;{Character.vie};{Character.PA};{Character.PM};{Character.cellID};;{Character.vieTotal};0;0;0,0,0,0,0,0,0," +
+                GTMpacket += $"{Character.id};0;{Character.TotalVie};{Character.TotalPA};{Character.TotalPM};{Character.cellID};;{Character.TotalVie};0;0;0,0,0,0,0,0,0," +
                     $"|998;0;50;6;3;444;;50;0;0;0,0,0,0,0,0,0,;|";
 
                 

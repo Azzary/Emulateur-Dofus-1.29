@@ -13,7 +13,7 @@ namespace LeafWorld.Game.Fight
         [PacketAttribute("Gp")]
         public void MovingplacementCell(Network.listenClient prmClient, string prmPacket)
         {
-            //GIC|998;373\0
+
             if (prmClient.account.character.fight.InFight != 1)
             {
                 return;
@@ -36,8 +36,6 @@ namespace LeafWorld.Game.Fight
         [PacketAttribute("GR1")]
         public void IsReady(Network.listenClient prmClient, string prmPacket)
         {
-
-
             if (prmClient.account.character.fight.InFight != 1 || prmClient.account.character.fight.IsReady)
             {
                 return;
@@ -65,6 +63,7 @@ namespace LeafWorld.Game.Fight
             }
             if (allReady)
             {
+                prmClient.account.character.Map.FightInMap[prmClient.account.character.fight.FightID].FightStade = 1;
                 for (int i = 0; i < prmClient.account.character.fight.EntityInFight.Count; i++)
                 {
                     listenClient entity = prmClient.account.character.fight.EntityInFight[i];
@@ -73,8 +72,8 @@ namespace LeafWorld.Game.Fight
                     entity.account.character.fight.InFight = 2;
                     entity.send(GTLpacket);
                 }
-                Fight fight = new Fight(prmClient.account.character.fight.EntityInFight, GTLpacket);
-                new Thread(fight.start).Start();
+                prmClient.account.character.Map.FightInMap[prmClient.account.character.fight.FightID].GTLpacket = GTLpacket;
+                new Thread(prmClient.account.character.Map.FightInMap[prmClient.account.character.fight.FightID].start).Start();
 
             }
         }
@@ -91,6 +90,35 @@ namespace LeafWorld.Game.Fight
             {
                 listenClient entity = prmClient.account.character.fight.EntityInFight[i];
                 entity.send($"GR0{prmClient.account.character.id}");
+            }
+
+        }
+
+        [PacketAttribute("GA903")]
+        public void JoinFight(Network.listenClient prmClient, string prmPacket)
+        {
+            if (prmClient.account.character.IsAvailable && int.TryParse(prmPacket.Split("\0")[0].Substring(7), out int id) && prmClient.account.character.IsAvailable && int.TryParse(prmPacket.Split(";")[0].Substring(5), out int FightID))
+            {
+
+
+                    if (prmClient.account.character.Map.FightInMap[FightID].FightStade != 0)
+                    {
+                        return;
+                    }
+                    for (int x = 0; x < prmClient.account.character.Map.FightInMap[FightID].ListEntity.Count; x++)
+                    {
+                        if (prmClient.account.character.Map.FightInMap[FightID].ListEntity[x].account.character.id == id)
+                        {
+                            prmClient.account.character.IsAvailable = false;
+                            prmClient.account.character.fight.equipeID = prmClient.account.character.Map.FightInMap[FightID].ListEntity[x].account.character.fight.equipeID;
+                            prmClient.account.character.fight.InFight = 1;
+                            prmClient.account.character.fight.FightID = prmClient.account.character.Map.FightInMap[FightID].ListEntity[x].account.character.fight.FightID;
+                            duel.LauchDuel(prmClient, null, prmClient.account.character.Map.FightInMap[FightID]);
+                            return;
+                        }
+                    }
+                
+
             }
 
         }

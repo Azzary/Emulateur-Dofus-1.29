@@ -82,38 +82,82 @@ namespace LeafWorld.Game.Fight
 
         }
 
-        private void LauchDuel(listenClient prmClient, listenClient ennemie)
+        public static void LauchDuel(listenClient prmClient, listenClient ennemie, Fight JoinFight = null)
         {
-            List<listenClient> EntityInFight = new List<listenClient>() { ennemie, prmClient };
-            ennemie.account.character.fight.EntityInFight = EntityInFight;
-            prmClient.account.character.fight.EntityInFight = EntityInFight;
-            ennemie.account.character.fight.equipeID = 1;
-            prmClient.account.character.fight.equipeID = 0;
-            ennemie.account.character.fight.AtributePosFight(ennemie);
-            prmClient.account.character.fight.AtributePosFight(prmClient);
+            List<listenClient> EntityInFight;
+            if (ennemie != null)
+            {
+                EntityInFight = new List<listenClient>() { ennemie, prmClient };
+                prmClient.account.character.fight.equipeID = 0;
+                ennemie.account.character.fight.equipeID = 1;
+                prmClient.account.character.fight.EntityInFight = EntityInFight;
+                ennemie.account.character.fight.EntityInFight = EntityInFight;
+                Fight fight = new Fight(EntityInFight);
+                fight.FightStade = 0;
+                int keys = 1;
+                while (prmClient.account.character.Map.FightInMap.ContainsKey(keys))
+                {
+                    keys++;
+                }
+                prmClient.account.character.Map.FightInMap.Add(keys,fight);
+                prmClient.account.character.fight.FightID = keys;
+                ennemie.account.character.fight.FightID = keys;
+                fight.InfoJoinConbat = new int[] { prmClient.account.character.id, prmClient.account.character.cellID, ennemie.account.character.id, ennemie.account.character.cellID, prmClient.account.character.fight.FightID };
+
+            }
+            else
+            {
+                JoinFight.ListEntity.Add(prmClient);
+                prmClient.account.character.fight.EntityInFight = JoinFight.ListEntity;
+                EntityInFight = JoinFight.ListEntity;
+            }
 
             string GMPacket = "";
             for (int i = 0; i < prmClient.account.character.Map.CharactersOnMap.Count; i++)
             {
                 prmClient.account.character.Map.CharactersOnMap[i].send($"GM|-{prmClient.account.character.id}");
-                prmClient.account.character.Map.CharactersOnMap[i].send($"GM|-{ennemie.account.character.id}");
-                prmClient.account.character.Map.CharactersOnMap[i].send($"Gc+1;0|{prmClient.account.character.id};{prmClient.account.character.cellID};0;-1|{ennemie.account.character.id};{ennemie.account.character.cellID};0;-1");
-                prmClient.account.character.Map.CharactersOnMap[i].send($"Gt{prmClient.account.character.id}|+{prmClient.account.character.id};{prmClient.account.character.speudo};{prmClient.account.character.level}\0" +
-                                                                        $"Gt{ennemie.account.character.id}|+{ennemie.account.character.id};{ennemie.account.character.speudo};{ennemie.account.character.level}\0fC1");
+                if (ennemie != null)
+                {
+                    prmClient.account.character.Map.CharactersOnMap[i].send($"GM|-{ennemie.account.character.id}");
+                    prmClient.account.character.Map.CharactersOnMap[i].send($"Gc+{prmClient.account.character.fight.FightID};0|{prmClient.account.character.id};{prmClient.account.character.cellID};0;-1|{ennemie.account.character.id};{ennemie.account.character.cellID};0;-1");
+                }
+            }
+            int y = prmClient.account.character.fight.FightID;
+            for (int x = 0; x < prmClient.account.character.Map.FightInMap[y].ListEntity.Count; x++)
+            {
+                Game.account.character.Character character = prmClient.account.character.Map.FightInMap[y].ListEntity[x].account.character;
+                prmClient.account.character.Map.FightInMap[y].ListEntity[x].send($"Gt{prmClient.account.character.id}|+{prmClient.account.character.id};{prmClient.account.character.speudo};{prmClient.account.character.level}");
+                prmClient.send($"Gt{character.id}|+{character.id};{character.speudo};{character.level}");
 
             }
+
+            prmClient.send("fC1");
+
+            
+            if (ennemie!= null)
+            {
+                ennemie.account.character.fight.AtributePosFight(ennemie);
+            }
+            
+            prmClient.account.character.fight.AtributePosFight(prmClient);
             foreach (listenClient Entity in EntityInFight)
             {
                         account.character.Character character = Entity.account.character;
+                character.UpdateEquipentStats();
                 GMPacket += $"|+{character.cellID};1;0^false;{character.id};{character.speudo}^-1;{character.classe};{character.gfxID}^100;{character.sexe};{character.level};0,0,0,{character.id + 1},0;{character.couleur1};{character.couleur2};{character.couleur3};null,null,null,null,null,1,;" +
-                    $"{character.vie};{character.PA};{character.PM};0;0;0;0;0;0;0;0;;0;0;";
+                    $"{character.TotalVie};{character.TotalPA};{character.TotalPM};0;0;0;0;0;0;0;0;;0;0;";
                                                                                                                                                                       
             }
 
             foreach (listenClient Entity in EntityInFight)
             {
                 Entity.send($"GJK2|1|1|0|0|0\0GP{prmClient.account.character.Map.PosFight}|{Entity.account.character.fight.equipeID}\0ILF0\0GM" + GMPacket);
+                foreach (listenClient Entity2 in EntityInFight)
+                {
+                    Entity.send(Item.MoveItem.GetItemsPos(Entity2.account.character));
+                }
             }
+
         }
     }
 }
