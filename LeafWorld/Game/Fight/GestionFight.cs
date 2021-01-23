@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace LeafWorld.Game.Fight
 {
-    class PreFight
+    class GestionFight
     {
 
         [PacketAttribute("Gp")]
@@ -26,7 +26,7 @@ namespace LeafWorld.Game.Fight
                     for (int i = 0; i < prmClient.account.character.fight.EntityInFight.Count; i++)
                     {
                         prmClient.account.character.fight.EntityInFight[i].send($"GIC|{prmClient.account.character.id};{cellID}");
-                        prmClient.account.character.cellID = cellID;
+                        prmClient.account.character.fight.FightCell = cellID;
                     }
                 }
             }
@@ -54,7 +54,7 @@ namespace LeafWorld.Game.Fight
                     allReady = false;
                 else
                 {
-                    GICpacket += $"{Character.id};{Character.cellID}|";
+                    GICpacket += $"{Character.id};{Character.fight.FightCell}|";
                     GTLpacket += $"|{Character.id}";
 
                 
@@ -123,5 +123,41 @@ namespace LeafWorld.Game.Fight
 
         }
 
+
+
+        [PacketAttribute("GQ")]
+        public void GiveUp(Network.listenClient prmClient, string prmPacket)
+        {
+            if (prmClient.account.character.fight.InFight == 0)
+            {
+                return;
+            }
+
+            if (prmClient.account.character.fight.EntityInFight.Count <= 2 && prmClient.account.character.Map.FightInMap.ContainsKey(prmClient.account.character.fight.FightID))
+            {
+                prmClient.account.character.Map.FightInMap.Remove(prmClient.account.character.fight.FightID);
+
+                for (int i = 0; i < prmClient.account.character.fight.EntityInFight.Count; i++)
+                {
+                    prmClient.account.character.fight.EntityInFight[i].send($"GM|-{prmClient.account.character.id}");
+                    prmClient.account.character.fight.EntityInFight[i].send("GV\0GCK|1\0ILS1000");
+                }
+                for (int i = 0; i < prmClient.account.character.Map.CharactersOnMap.Count; i++)
+                {
+                    prmClient.account.character.Map.CharactersOnMap[0].send("Gc-" + prmClient.account.character.fight.FightID);
+                    Map.MapGestion.CreateMapPacketInfo(prmClient);
+                }
+            }
+            else
+            {
+                prmClient.send("GV\0GCK|1\0ILS1000");
+                prmClient.account.character.fight.EntityInFight.Remove(prmClient);
+                for (int i = 0; i < prmClient.account.character.fight.EntityInFight.Count; i++)
+                {
+                    prmClient.account.character.fight.EntityInFight[i].send($"GM|-{prmClient.account.character.id}");
+                }
+            }
+
+        }
     }
 }

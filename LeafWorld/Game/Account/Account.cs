@@ -8,6 +8,8 @@ namespace LeafWorld.Game.account
     public class Account
     {
         public int statue = 0;
+
+        public short Role { get; set; }
         public int ID { get; set; }
         public List<character.Character> ListCharacter = new List<character.Character>();
 

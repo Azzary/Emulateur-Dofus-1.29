@@ -8,7 +8,7 @@ namespace LeafAuth.Network
 {
     class listenClient
     {
-        public int test = 0;
+
         public event Action<string> packetReceivedEvent;
 
         public Database.LoadDataBase database;
@@ -43,7 +43,23 @@ namespace LeafAuth.Network
             
         }
 
+        public void Recv()
+        {
+            if (ClientSocket.Poll(10000, SelectMode.SelectRead))
+            {
+                byte[] buffer = new byte[ClientSocket.ReceiveBufferSize];
+                int len = ClientSocket.Receive(buffer);
+                if (len == 0)
+                    return;
+                string Packets = Encoding.ASCII.GetString(buffer, 0, len);
+                Console.WriteLine(Packets);
+                foreach (string Packet in Packets.Split('\0'))
+                {
+                    PacketGestion.PacketGestion.Gestion(this, Packet);
+                }
 
+            }
+        }
 
         public void startlisten()
         {
@@ -64,11 +80,8 @@ namespace LeafAuth.Network
             {
                 len = ClientSocket.Receive(buffer);
                 packets = Encoding.UTF8.GetString(buffer,0, len);
-
                 if (packets == string.Empty)
                     break;
-
-                //Console.WriteLine(packets);
 
                 foreach (string packet in packets.Replace("\x0a", string.Empty).Split('\0').Where(x => x != string.Empty))
                 {

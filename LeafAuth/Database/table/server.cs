@@ -48,6 +48,7 @@ namespace LeafAuth.Database.table
 
         public void getCharacOnServer(listenClient prmClient)
         {
+
             string r = "SELECT accountID, ID from personnage where" +
                 " accountID='" + prmClient.account.ID + "';";
             foreach (int idServ in prmClient.account.ListServ)

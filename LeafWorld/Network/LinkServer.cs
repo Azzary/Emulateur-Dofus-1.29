@@ -35,14 +35,20 @@ namespace LeafWorld.Network
                 len = connection.Receive(buffer);
 
                 packets = Encoding.UTF8.GetString(buffer, 0, len);
-                if (packets.Substring(0, 2) == "NC")
+                foreach (var item in packets.Split(";"))
                 {
-                    ListOfGUID.Add(packets.Substring(2).Split("|"));
+                    if (item == "")
+                        break;
+                    if (item.Substring(0, 2) == "NC")
+                    {
+                        ListOfGUID.Add(item.Substring(2).Split("|"));
+                    }
+                    if (item.Substring(0, 2) == "DC")
+                    {
+                        ListOfGUID.Remove(item.Substring(2).Split("|"));
+                    }
                 }
-                if (packets.Substring(0, 2) == "DC")
-                {
-                    ListOfGUID.Remove(packets.Substring(2).Split("|"));
-                }
+
 
                  
             }
@@ -52,7 +58,7 @@ namespace LeafWorld.Network
         {
             try
             {
-                connection.Send(Encoding.ASCII.GetBytes($"NC{ID}"));
+                connection.Send(Encoding.ASCII.GetBytes($"NC{ID};"));
             }
             catch (Exception) { };
         }
@@ -62,7 +68,7 @@ namespace LeafWorld.Network
             ListOfGUID.Remove($"{ID}|{GUID}".Split('|'));
             try
             {
-                connection.Send(Encoding.ASCII.GetBytes($"DC{ID}"));
+                connection.Send(Encoding.ASCII.GetBytes($"DC{ID};"));
             }
             catch (Exception) { };
         }

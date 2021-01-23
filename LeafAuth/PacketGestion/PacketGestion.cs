@@ -10,7 +10,7 @@ namespace LeafAuth.PacketGestion
 {
     class PacketGestion
     {
-        public static readonly List<PacketDatas> metodos = new List<PacketDatas>();
+        public static readonly List<PacketDatas> methodes = new List<PacketDatas>();
 
 
         public static void init()
@@ -23,14 +23,14 @@ namespace LeafAuth.PacketGestion
                 Type type_string = Type.GetType(type.DeclaringType.FullName);
 
                 object instance = Activator.CreateInstance(type_string, null);
-                metodos.Add(new PacketDatas(instance, attribute.packet, type));
+                methodes.Add(new PacketDatas(instance, attribute.packet, type));
             }
         }
 
 
         public static bool Gestion(Network.listenClient client, string packet)
         {
-            PacketDatas method = metodos.Find(m => packet.StartsWith(m.name_packet));
+            PacketDatas method = methodes.Find(m => packet.StartsWith(m.name_packet));
 
             try
             {

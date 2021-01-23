@@ -9,6 +9,28 @@ namespace LeafAuth.Database.table
 {
     class account
     {
+        /// <summary>
+        /// Create account test 
+        /// </summary>
+        public void createaccount(int nbCompte)
+        {
+            for (int i = 0; i < nbCompte; i++)
+            {
+                Console.WriteLine(i);
+                string cmd = "INSERT INTO account SET " +
+                    $"username = 'test{i}'," +
+                    $"password = 'test'," +
+                    $"speudo = 'test'";
+                using (MySqlCommand commande = new MySqlCommand(cmd, conn))
+                {
+                    MySqlDataReader Reader = commande.ExecuteReader();
+                    Reader.Close();
+                }
+            }
+
+
+            return;
+        }
         MySqlConnection conn;
         public account(MySqlConnection _conn)
         {
@@ -54,6 +76,7 @@ namespace LeafAuth.Database.table
                         {
                             prmClient.linkServer.ListIDAccount.Add((int)Reader["id"]);
                             prmClient.account.ID = (int)Reader["id"];
+                            prmClient.account.role = (int)Reader["role"];
                             prmClient.account.Qsecret = (string)Reader["Qsecrete"];
                             prmClient.account.Rsecret = (string)Reader["Rsecrete"];
                             Reader.Close();

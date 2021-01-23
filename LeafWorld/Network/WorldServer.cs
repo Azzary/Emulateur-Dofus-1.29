@@ -30,16 +30,16 @@ namespace LeafWorld.Network
             Console.WriteLine("Opening Socket...");
             Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            server.Bind(new IPEndPoint(IPAddress.Parse(World.WorldConfig.IP), World.WorldConfig.port));
+            server.Bind(new IPEndPoint(IPAddress.Parse(World.WorldConfig.IP), World.WorldConfig.PORT));
             server.Listen(5);
-            new Thread(wait_queue).Start();
-            Console.WriteLine("Waiting Connection...");
+            Console.WriteLine($"Waiting Connection. {World.WorldConfig.IP}:{World.WorldConfig.PORT}");
             AcceptConnection(server);
 
         }
 
         private void AcceptConnection(object o)
         {
+            new Thread(wait_queue).Start();
             Socket server = (Socket)o;
             while (true)
             {
@@ -47,49 +47,13 @@ namespace LeafWorld.Network
                 listenClient li = new listenClient(socketClient, DataBase, queue, linkServer, CharacterInWorld);
                 new Thread(ThreadlistenClient).Start(li);
                 queue.Add(li);
-                if (queue.Count == 0)
-                {
-                    new Thread(wait_queue).Start();
-                }
-
-
             }
 
         }
 
-        private void send_af()
+       private void wait_queue()
         {
             while (true)
-            {
-                for (int i = 0; i < queue.Count; i++)
-                {
-                    if (i < queue.Count)
-                    {
-                        listenClient var = queue[0];
-                        if (var == null)
-                        {
-                            continue;
-                        }
-                        if (var.isCo)
-                        {
-
-                            var.send($"Af{queue.IndexOf(var) + 1}");
-
-                        }
-                       
-                       
-                    }
-                    Thread.Sleep((int)(3000/queue.Count));
-                    
-                }
-            }
-        }
-        int nbclient = 0;
-
-        private void wait_queue()
-        {
-            //new Thread(send_af).Start();
-            while (!sauvegarde)
             {
                 if (queue.Count > 0)
                 {
@@ -111,12 +75,20 @@ namespace LeafWorld.Network
                         }
                         if (!var.DbLoad)
                         {
-                            var.isCo = false;
+                            if (var.IsLoadDb)
+                            {
+                                while (!var.DbLoad && var.isCo)
+                                {
+                                    Thread.Sleep(40);
+                                }
+                            }
+                            else
+                            {
+                                var.isCo = false;
+                            }
+                            
                         }
-
-                        nbclient++;
                         Console.WriteLine($"Client");
-
                     }
                     else
                     {
@@ -133,23 +105,14 @@ namespace LeafWorld.Network
         private void ThreadlistenClient(object o)
         {
             listenClient li = (listenClient)o;
-            try
-            {
-                li.startlisten();
-            }
-            catch (Exception s)
-            { Console.WriteLine(s); }
-            nbclient--;
+            li.startlisten();
+
             Console.WriteLine("Client Deconnected");
-            li.linkServer.RemoveAccount(li.account.ID,li.account.GUID);
             queue.Remove(li);
             li.remove(li);
-            ListSauvegarde.Add(li);
+            //ListSauvegarde.Add(li);
             queue.Add(li);
-            if (queue.Count == 0)
-            {
-                new Thread(wait_queue).Start();
-            }
+
 
         }
     }

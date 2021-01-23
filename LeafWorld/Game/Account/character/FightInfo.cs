@@ -9,6 +9,7 @@ namespace LeafWorld.Game.account.character
     public class Fight
     {
         public int FightID { get; set; }
+        public int FightCell { get; set; }
         public bool YourTurn { get; set; }
         public Network.listenClient RequestDuel { get; set; }
 
@@ -35,7 +36,7 @@ namespace LeafWorld.Game.account.character
 
         public void AtributePosFight(listenClient prmClient)
         {
-            prmClient.account.character.cellID = -1;
+            prmClient.account.character.fight.FightCell = -1;
             bool flag = true;
             string cells = prmClient.account.character.Map.PosFight.Split("|")[equipeID];
             for (int i = 0; i < cells.Length; i+=2)
@@ -46,7 +47,7 @@ namespace LeafWorld.Game.account.character
                     flag = false;
                     for (int x = 0; x < EntityInFight.Count; x++)
                     {
-                        if (EntityInFight[x].account.character.cellID == ListCellIDPlacement[i / 2])
+                        if (EntityInFight[x].account.character.fight.FightCell == ListCellIDPlacement[i / 2])
                         {
                             flag = true;
                             break;
@@ -54,7 +55,7 @@ namespace LeafWorld.Game.account.character
                     }
                     if (!flag || EntityInFight.Count == 0)
                     {
-                        prmClient.account.character.cellID = ListCellIDPlacement[i / 2];
+                        prmClient.account.character.fight.FightCell = ListCellIDPlacement[i / 2];
                     }
 
                 }

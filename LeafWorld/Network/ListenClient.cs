@@ -4,13 +4,14 @@ using System.Text;
 using System.Net.Sockets;
 using System.Linq;
 using System.Threading;
+using System.Collections;
 
 namespace LeafWorld.Network
 {
     public class listenClient
     {
 
-        public event Action<string> packetReceivedEvent;
+        //public event Action<string> packetReceivedEvent;
         public List<listenClient> CharacterInWorld;
 
         public Database.LoadDataBase database;
@@ -45,6 +46,7 @@ namespace LeafWorld.Network
         }
 
         public bool DbLoad = false;
+        public bool IsLoadDb = false;
         public void startlisten()
         {
             send("HG");
@@ -52,54 +54,69 @@ namespace LeafWorld.Network
             int len = ClientSocket.Receive(buffer);
             string packets = Encoding.UTF8.GetString(buffer, 0, len);
             string guid = packets.Substring(2,7);
-            if (isCo)
-            {
-                for (int i = 0; i < linkServer.ListOfGUID.Count; i++)
-                {
-                    if (linkServer.ListOfGUID[i][1] == guid)
-                    {
-                        account.GUID = guid;
-                        account.ID = int.Parse(linkServer.ListOfGUID[i][0]);
-                        linkServer.ListOfGUID.RemoveAt(i);
-                        linkServer.addAccount(account.ID);
-                        database.tablecharacter.LoadCharacter(this);
-                        DbLoad = true;
-                        send("ATK0");
-                        send("ALK10|0");
-                        break;
-                    }
 
-                }
-                
+            string[] VerifAccount = null;
+
+            if (linkServer.ListOfGUID.Count != 0)
+                VerifAccount = linkServer.ListOfGUID.Find(x => x != null && x[1] == guid);
+            
+            if (VerifAccount == null)
+            {
+                ClientSocket.Close();
+                isCo = false;
+                return;
             }
+            account.GUID = guid;
+            account.ID = int.Parse(VerifAccount[0]);
+            account.Role = short.Parse(VerifAccount[2]);
+            linkServer.ListOfGUID.Remove(VerifAccount);
+            linkServer.addAccount(account.ID);
 
             while (true)
             {
-                if (YourTurn)
+                if (YourTurn || !isCo)
                 {
                     break;
                 }
-                else if (!isCo)
-                {
-                    break;
-                }
+                send($"Af{queue.IndexOf(this) + 1}");
                 Thread.Sleep(80);
+            }
+            IsLoadDb = true;
+            if (isCo)
+            {
+                database.tablecharacter.LoadCharacter(this);
+                send("ATK0");
+                send("ALK10|0");
+                DbLoad = true;
+            }
+
+            if (DbLoad == false)
+            {
+                //Voir mm un ban
+                isCo = false;
+                Console.WriteLine("hoho");
             }
 
             while (isCo)
             {
-                len = ClientSocket.Receive(buffer);
-                packets = Encoding.UTF8.GetString(buffer, 0, len);
+                try
+                {
+                    len = ClientSocket.Receive(buffer);
+                    packets = Encoding.UTF8.GetString(buffer, 0, len);
+                }
+                catch (Exception)
+                { break; }
+
 
                 if (packets == string.Empty)
                     break;
 
-                Console.WriteLine(packets);
+                //Console.WriteLine(packets);
 
                 foreach (string packet in packets.Replace("\x0a", string.Empty).Split('\0').Where(x => x != string.Empty))
                 {
-                    packetReceivedEvent?.Invoke(packet);
-
+                    Console.WriteLine(packet);
+                    //packetReceivedEvent?.Invoke(packet);
                     PacketGestion.PacketGestion.Gestion(this, packet);
                 }
 
@@ -112,12 +129,14 @@ namespace LeafWorld.Network
 
         public void remove(listenClient prmClient)
         {
+            linkServer.RemoveAccount(account.ID, account.GUID);
             prmClient.isCo = false;
             
             if (account.character != null && account.character.Map != null)
             {
+                prmClient.account.character.Map.Remove(prmClient);
                 prmClient.CharacterInWorld.Remove(prmClient);
-                account.character.Map.remove(prmClient);
+                //account.character.Map.remove(prmClient);
             }
         }
 

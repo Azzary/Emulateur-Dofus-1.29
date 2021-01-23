@@ -9,7 +9,7 @@ namespace LeafWorld.World
     {
         public static readonly string IP = "127.0.0.1";
         public static readonly int ServerID = 602;
-        public static readonly int port = 5555;
+        public static readonly int PORT = 5555;
 
         public static int MAP_START_ENUTROF = 10299;
         public static int CELL_START_ENUTROF = 272;

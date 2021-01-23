@@ -6,5 +6,6 @@ namespace LeafAuth.PacketGestion
 {
     class Frame
     {
+
     }
 }

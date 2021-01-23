@@ -1,11 +1,6 @@
 ﻿using LeafWorld.Network;
 using LeafWorld.PacketGestion;
-using Org.BouncyCastle.Asn1.Crmf;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Text;
 
 namespace LeafWorld.Game.Fight
 {
@@ -39,8 +34,6 @@ namespace LeafWorld.Game.Fight
                     }
                 }
             }
-
-
         }
 
 
@@ -71,6 +64,7 @@ namespace LeafWorld.Game.Fight
             {
                 return;
             }
+            prmClient.account.character.fight.IsLauncherDuel = true;
             Network.listenClient ennemie = prmClient.account.character.fight.RequestDuel;
             ennemie.account.character.fight.InFight = 1;
             prmClient.account.character.fight.InFight = 1;
@@ -144,7 +138,7 @@ namespace LeafWorld.Game.Fight
             {
                         account.character.Character character = Entity.account.character;
                 character.UpdateEquipentStats();
-                GMPacket += $"|+{character.cellID};1;0^false;{character.id};{character.speudo}^-1;{character.classe};{character.gfxID}^100;{character.sexe};{character.level};0,0,0,{character.id + 1},0;{character.couleur1};{character.couleur2};{character.couleur3};null,null,null,null,null,1,;" +
+                GMPacket += $"|+{character.fight.FightCell};1;0^false;{character.id};{character.speudo}^-1;{character.classe};{character.gfxID}^100;{character.sexe};{character.level};0,0,0,{character.id + 1},0;{character.couleur1};{character.couleur2};{character.couleur3};null,null,null,null,null,1,;" +
                     $"{character.TotalVie};{character.TotalPA};{character.TotalPM};0;0;0;0;0;0;0;0;;0;0;";
                                                                                                                                                                       
             }
@@ -159,5 +153,9 @@ namespace LeafWorld.Game.Fight
             }
 
         }
+
+
     }
+
+
 }

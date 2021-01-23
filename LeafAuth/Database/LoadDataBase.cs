@@ -10,11 +10,12 @@ namespace LeafAuth.Database
     {
         public table.account tableaccount;
         public table.server tableserver;
+        private MySqlConnection conn;
+        
         public LoadDataBase()
         {
-
             string connStr = "server = localhost; user = root; database = leafauth;";
-            MySqlConnection conn = new MySqlConnection(connStr);
+            conn = new MySqlConnection(connStr);
             Console.WriteLine("Opening Connection Database");
             conn.Open();
             Console.WriteLine("load Table:");

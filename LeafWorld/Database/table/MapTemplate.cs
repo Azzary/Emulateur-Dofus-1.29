@@ -65,15 +65,19 @@ namespace LeafWorld.Database.table
                 {
                     while (Reader.Read())
                     {
-                        if (Maps.ContainsKey((int)Reader["map"]))
+                        int mapid = (int)Reader["map"];
+                        if (Maps.ContainsKey(mapid))
                         {
-                            if (!Maps[(int)Reader["map"]].CellTp.ContainsKey((int)Reader["cell"]))
+                            int cellID = (int)Reader["cell"];
+                            if (!Maps[mapid].CellTp.ContainsKey(cellID))
                             {
-                                Maps[(int)Reader["map"]].CellTp.Add((int)Reader["cell"], (string)Reader["args"]);
+                                string[] strArgs = Reader["args"].ToString().Split(',');
+                                int[] intArgs = new int[2] { Convert.ToInt32(strArgs[0]), Convert.ToInt32(strArgs[1])};
+                                Maps[mapid].CellTp.Add(cellID, intArgs);
                             }
-                            
                         }
-                        
+                        //     1947               
+                        //    532
                     }
                 }
                 Reader.Close();

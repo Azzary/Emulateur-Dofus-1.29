@@ -17,9 +17,9 @@ namespace LeafWorld.Game.Tchat
             string type = var[0];
             string message = var[1];
             string packet;
-            if (message.Substring(0,1) == "/")
+            if (message.Substring(0,1) == ".")
             {
-
+                Command.Command.GetCommand(prmClient, message);
             }
             if (type == "*")
             {

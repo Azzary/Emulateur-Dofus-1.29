@@ -35,15 +35,20 @@ namespace LeafAuth.Network
                     buffer = new byte[server.ReceiveBufferSize];
                     len = server.Receive(buffer);
                     packets = Encoding.UTF8.GetString(buffer, 0, len);
-                    packets = Encoding.UTF8.GetString(buffer, 0, len);
-                    if (packets.Substring(0,2) == "NC")
+                    foreach (var item in packets.Split(";"))
                     {
-                        ListIDAccount.Add(int.Parse(packets.Substring(2)));
+                        if (item == "")
+                            break;
+                        if (item.Substring(0, 2) == "NC")
+                        {
+                            ListIDAccount.Add(int.Parse(item.Substring(2)));
+                        }
+                        if (item.Substring(0, 2) == "DC")
+                        {
+                            ListIDAccount.Remove(int.Parse(item.Substring(2)));
+                        }
                     }
-                    if (packets.Substring(0, 2) == "DC")
-                    {
-                        ListIDAccount.Remove(int.Parse(packets.Substring(2)));
-                    }
+
 
                 }
 
@@ -51,9 +56,9 @@ namespace LeafAuth.Network
            
         }
     
-        public void sendConnectionToServer(int ID, string guid)
+        public void sendConnectionToServer(int ID, string guid, int Role)
         {
-            server.Send(Encoding.ASCII.GetBytes($"NC{ID}|{guid}"));
+            server.Send(Encoding.ASCII.GetBytes($"NC{ID}|{guid}|{Role};"));
 
         }
 

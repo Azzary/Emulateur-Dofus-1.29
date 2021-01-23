@@ -19,7 +19,7 @@ namespace LeafAuth.connection
                     packet += "bwZ"; //port
                     string GUID = Util.hash.GenerateString(7);
                     packet += GUID;
-                    prmClient.linkServer.sendConnectionToServer(prmClient.account.ID, GUID);
+                    prmClient.linkServer.sendConnectionToServer(prmClient.account.ID, GUID, prmClient.account.role);
                     prmClient.send(packet);
                 }
             }

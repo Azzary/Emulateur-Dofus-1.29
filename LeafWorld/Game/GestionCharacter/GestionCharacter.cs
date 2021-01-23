@@ -107,7 +107,7 @@ namespace LeafWorld.Game.Character
                 $"{character.PA},{character.EquipementPA},0,0,{character.TotalPA}|" +
                 $"{character.PM},{character.EquipementPM},0,0,{character.TotalPM}|" +
                 $"{character.force},{character.EquipementForce},0,{character.TotalForce}|" +
-                $"{character},{character.EquipementVie},0,{character.TotalVie}|" +
+                $"{character.vie},{character.EquipementVie},0,{character.TotalVie}|" +
                 $"{character.sagesse},{character.EquipementSagesse},0,{character.TotalSagesse}|" +
                 $"{character.chance},{character.EquipementChance},0,{character.TotalChance}|" +
                 $"{character.agi},{character.EquipementAgi},0,{character.TotalAgi}|" +

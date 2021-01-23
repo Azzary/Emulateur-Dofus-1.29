@@ -92,7 +92,7 @@ namespace LeafWorld.Game.Fight
 
 
                     //GTM|1257;0;50;6;3;368;;50;0;0;0,0,0,0,0,0,0,|998;0;50;6;3;444;;50;0;0;0,0,0,0,0,0,0,\0
-                GTMpacket += $"{Character.id};0;{Character.TotalVie};{Character.TotalPA};{Character.TotalPM};{Character.cellID};;{Character.TotalVie};0;0;0,0,0,0,0,0,0," +
+                GTMpacket += $"{Character.id};0;{Character.TotalVie};{Character.TotalPA};{Character.TotalPM};{Character.fight.FightCell};;{Character.TotalVie};0;0;0,0,0,0,0,0,0," +
                     $"|998;0;50;6;3;444;;50;0;0;0,0,0,0,0,0,0,;|";
 
                 

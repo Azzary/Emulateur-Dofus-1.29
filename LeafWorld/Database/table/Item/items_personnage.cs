@@ -44,8 +44,7 @@ namespace LeafWorld.Database.table.Item
                                 Game.Item.Item item = prmClient.database.model_item.AllItems[(int)Reader["modelid"]];
                                 if (item.Type < 0)
                                     return;
-                                if (true)
-                                {
+
                                     character.Invertaire.Stuff.Add(new Game.Item.Stuff(
                                         (int)Reader["modelid"],
                                         (int)Reader["uid"],
@@ -55,7 +54,7 @@ namespace LeafWorld.Database.table.Item
                                         (string)Reader["stats"],
                                         item.Condition,
                                         item.infosWeapon));
-                                }
+
                             }
                             
                             

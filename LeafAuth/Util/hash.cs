@@ -79,7 +79,7 @@ namespace LeafAuth.Util
                     }
                 }
             }
-            return "DD";
+            return "None";
         }
 
     }

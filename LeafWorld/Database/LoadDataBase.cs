@@ -1,6 +1,7 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 
+
 namespace LeafWorld.Database
 {
     public class LoadDataBase
@@ -21,8 +22,8 @@ namespace LeafWorld.Database
             conn.Open();
             Console.WriteLine("load Table:");
             Console.WriteLine("           Character...");
-            GetId(conn);
             tablecharacter = new table.Character.Character(conn);
+            GetId(conn);
             tableCharacterSpells = new table.Character.CharacterSpell(conn);
             Console.WriteLine("           Spell...");
             tablespells = new table.Character.Spell(conn);
