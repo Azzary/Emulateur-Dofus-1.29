@@ -25,6 +25,7 @@ namespace LeafBot
                 {
                     nb.Turn(i);
                     new Thread(listClients[i].StartConnection).Start();
+                    Thread.Sleep(10);
                 }
                 catch (Exception) { }
 

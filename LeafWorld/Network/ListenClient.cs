@@ -35,6 +35,7 @@ namespace LeafWorld.Network
 
         }
 
+      
         public void send(string packet)
         {
             try
@@ -57,9 +58,12 @@ namespace LeafWorld.Network
 
             string[] VerifAccount = null;
 
-            if (linkServer.ListOfGUID.Count != 0)
-                VerifAccount = linkServer.ListOfGUID.Find(x => x != null && x[1] == guid);
-            
+            for (int i = 0; i < 3; i++)
+            {
+                if (linkServer.ListOfGUID.Count != 0)
+                    VerifAccount = linkServer.ListOfGUID.Find(x => x != null && x[1] == guid);
+                Thread.Sleep(50);
+            }
             if (VerifAccount == null)
             {
                 ClientSocket.Close();
@@ -92,7 +96,6 @@ namespace LeafWorld.Network
 
             if (DbLoad == false)
             {
-                //Voir mm un ban
                 isCo = false;
                 Console.WriteLine("hoho");
             }
@@ -124,6 +127,28 @@ namespace LeafWorld.Network
             }
 
             ClientSocket.Close();
+        }
+
+        public bool recv()
+        {
+            byte[] buffer = new byte[ClientSocket.ReceiveBufferSize];
+            int len = ClientSocket.Receive(buffer);
+            string packets = Encoding.UTF8.GetString(buffer, 0, len);
+            if (ClientSocket.Poll(10000, SelectMode.SelectRead))
+            {
+                buffer = new byte[1024];
+                len = ClientSocket.Receive(buffer);
+                if (len == 0)
+                    return false;
+                packets = Encoding.ASCII.GetString(buffer, 0, len);
+                foreach (string packet in packets.Replace("\x0a", string.Empty).Split('\0').Where(x => x != string.Empty))
+                {
+                    Console.WriteLine(packet);
+                    PacketGestion.PacketGestion.Gestion(this, packet);
+                }
+                return true;
+            }
+            return false;
         }
 
 

@@ -39,6 +39,8 @@ namespace LeafWorld.Network
 
         }
 
+        List<listenClient> ListensClients = new List<listenClient>();
+
         private void AcceptConnection(object o)
         {
             new Thread(wait_queue).Start();
@@ -111,7 +113,7 @@ namespace LeafWorld.Network
             {
                 li.startlisten();
             }
-            catch (SocketException) { }
+            
             catch (Exception ex)
             {
                 StringBuilder sb = new StringBuilder();

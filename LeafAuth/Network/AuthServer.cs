@@ -90,20 +90,22 @@ namespace LeafAuth.Network
             {
                 li.startlisten();
             }
-            catch (SocketException) {}
             catch (Exception ex)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append(ex);
-                string path = Directory.GetCurrentDirectory() + "\\log\\" + li.account.ID + "_log.txt";
-                using (StreamWriter sw = new StreamWriter(path, true))
+                if (li.account.ID != -1)
                 {
-                    sw.WriteLine(ex+ "\n");
-                }
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(ex);
+                    string path = Directory.GetCurrentDirectory() + "\\log\\" + li.account.ID + "_log.txt";
+                    using (StreamWriter sw = new StreamWriter(path, true))
+                    {
+                        sw.WriteLine(ex + "\n");
+                    }
 
-                
-                File.AppendAllText(path, sb.ToString());
-                sb.Clear();
+
+                    File.AppendAllText(path, sb.ToString());
+                    sb.Clear();
+                }
             }
             Console.WriteLine("Client Deconnected");
             li.linkServer.RemoveAccount(li.account.ID);

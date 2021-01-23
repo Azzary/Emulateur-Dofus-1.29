@@ -20,6 +20,7 @@ namespace LeafAuth.Account
         public string PacketAH { get; set; }
         public Account(string _key)
         {
+            ID = -1;
             PacketAH = "AH";
             PacketAx = "AxK10";
             ListServ = new List<int>();
