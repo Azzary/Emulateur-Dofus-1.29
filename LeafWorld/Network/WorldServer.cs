@@ -3,9 +3,11 @@ using Org.BouncyCastle.Cms;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
+using System.IO;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
 namespace LeafWorld.Network
@@ -105,7 +107,26 @@ namespace LeafWorld.Network
         private void ThreadlistenClient(object o)
         {
             listenClient li = (listenClient)o;
-            li.startlisten();
+            try
+            {
+                li.startlisten();
+            }
+            catch (SocketException) { }
+            catch (Exception ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(ex);
+                string path = Directory.GetCurrentDirectory() + "\\log\\" + li.account.ID + "_log.txt";
+                using (StreamWriter sw = new StreamWriter(path, true))
+                {
+                    sw.WriteLine(ex + "\n");
+                }
+
+
+                File.AppendAllText(path, sb.ToString());
+                sb.Clear();
+            }
+
 
             Console.WriteLine("Client Deconnected");
             queue.Remove(li);
