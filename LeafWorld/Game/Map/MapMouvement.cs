@@ -36,8 +36,13 @@ namespace LeafWorld.Game.Map
             {
                 return;
             }
+            Cell.Cell Cell = prmClient.account.character.Map.Cells[prmClient.account.character.cellID];
+            if (prmClient.account.character.fight.InFight == 2)
+                Cell = prmClient.account.character.Map.Cells[prmClient.account.character.fight.FightCell];
+
+
             Map map = prmClient.account.character.Map;
-            int Cell = prmClient.account.character.cellID;
+            
 
             List<int> ListCell = new List<int>();
             string chemain = "";
@@ -51,54 +56,71 @@ namespace LeafWorld.Game.Map
                         return;
                     for (int nb = 0; nb < prmClient.account.character.fight.EntityInFight.Count; nb++)
                     {
-                        if (prmClient.account.character.fight.EntityInFight[nb].account.character.cellID == CellSend)
+                        if (prmClient.account.character.fight.EntityInFight[nb].account.character.fight.FightCell == CellSend)
                             return;
                     }
 
                 }
                 while (true)
                 {
-                    Cell = Pathfinding.NextCell(map, Cell, dir);
-                    ListCell.Add(Cell);
-                    if (Cell != CellSend)
+                    int index = Pathfinding.NextCell(map, Cell.ID, dir);
+                    if (index < 0 || index > map.Cells[map.Cells.Count - 1].ID)
                     {
-                        if (Cell < 0 || Cell >= map.Cells[map.Cells.Count - 1])
-                        {
-                            prmClient.send($"BN\0GA0; 1;{prmClient.account.character.id}; b{Util.CellToChar(prmClient.account.character.cellID)}"); 
-                            return;
-                        }
+                        prmClient.send($"BN\0GA0; 1;{prmClient.account.character.id}; b{Util.CellToChar(prmClient.account.character.cellID)}");
+                        return;
                     }
-                    else
+                    Cell = prmClient.account.character.Map.Cells[index];
+
+                    if (!(!Cell.UnWalkable || !Cell.Door) || (Cell.Paddock && Cell.ID != CellSend))
                     {
-                        chemain += Util.GetDirChar(dir) + Util.CellToChar(Cell);
+                        prmClient.send($"BN\0GA0; 1;{prmClient.account.character.id}; b{Util.CellToChar(prmClient.account.character.cellID)}");
+                        return;
+                    }
+                    ListCell.Add(Cell.ID);
+                    if (Cell.ID == CellSend)
+                    {
+                        if (!Cell.Paddock)
+                            chemain += Util.GetDirChar(dir) + Util.CellToChar(Cell.ID);
+                        else
+                        {
+                            //use iteractif
+                        }
                         break;
                     }
+                    
+
                 }
                 
             }
 
-            chemain = ($"GA0;1;{prmClient.account.character.id};b{Util.CellToChar(prmClient.account.character.cellID)}{chemain}");
             List<listenClient> CharactersOnMap;
             if (prmClient.account.character.fight.InFight == 2)
             {
                 if (ListCell.Count > prmClient.account.character.TotalPM)
                     return;
+                chemain = ($"GA0;1;{prmClient.account.character.id};b{Util.CellToChar(prmClient.account.character.fight.FightCell)}{chemain}");
                 prmClient.account.character.TotalPM -= ListCell.Count;
                 chemain += $"\0GA;129;{prmClient.account.character.id};{prmClient.account.character.id},-{ListCell.Count}";
                 CharactersOnMap = prmClient.account.character.fight.EntityInFight;
+                prmClient.account.character.fight.FightCell = Util.CharToCell(chemain.Substring(chemain.Length - 2));
             }
             else
+            {
+                chemain = ($"GA0;1;{prmClient.account.character.id};b{Util.CellToChar(prmClient.account.character.cellID)}{chemain}");
                 CharactersOnMap = map.CharactersOnMap;
-            prmClient.account.character.cellID = Util.CharToCell(prmPacket.Substring(prmPacket.Length - 2));
+                prmClient.account.character.cellID = Util.CharToCell(chemain.Substring(chemain.Length - 2));
+            }
             prmClient.account.character.ListCellMove = ListCell;
             prmClient.account.character.WaitMoving = DateTimeOffset.Now.ToUnixTimeSeconds() + timing(ListCell, map);
-
+            prmClient.account.character.IsAvailable = false;
+            Console.WriteLine(CharactersOnMap.Count);
             for (int i = 0; i < CharactersOnMap.Count; i++)
             {
                 CharactersOnMap[i].send(chemain);
             }
 
         }
+
 
 
 
@@ -123,31 +145,35 @@ namespace LeafWorld.Game.Map
                 prmClient.account.character.WaitMoving = DateTimeOffset.Now.ToUnixTimeSeconds() + 10000000;
                 return;
             }
+
             if (prmClient.account.character.Map.CellTp.ContainsKey(prmClient.account.character.cellID))
             {
-                string[] argTP = prmClient.account.character.Map.CellTp[prmClient.account.character.cellID].Split(",");
-                Map NewMap = prmClient.database.tablemap.Maps[int.Parse(argTP[0])];
-                prmClient.account.character.Map.CharactersOnMap.Remove(prmClient);
-                NewMap.CharactersOnMap.Add(prmClient);
-                Map LastMap = prmClient.account.character.Map;
-                account.character.Character character;
-                for (int i = 0; i < LastMap.CharactersOnMap.Count; i++)
-                {
+                int[] arg = prmClient.account.character.Map.CellTp[prmClient.account.character.cellID];
 
-                    character = LastMap.CharactersOnMap[i].account.character;
-
-                   LastMap.CharactersOnMap[i].send($"GM|-{prmClient.account.character.id}");
-
-                }
-                prmClient.account.character.Map = NewMap;
-                prmClient.account.character.mapID = NewMap.Id;
-                prmClient.account.character.cellID = int.Parse(argTP[1]);
-                prmClient.send($"GDM|{NewMap.Id}|{NewMap.CreateTime}|{NewMap.DataKey}");
+                SwitchMap(prmClient, arg[0], arg[1]);
             }
+            prmClient.account.character.IsAvailable = true;
             prmClient.account.character.ListCellMove.Clear();
         }
         
-        
+        public static void SwitchMap(Network.listenClient prmClient, int mapID, int CellID)
+        {
+            Map NewMap = prmClient.database.tablemap.Maps[mapID];
+            prmClient.account.character.Map.CharactersOnMap.Remove(prmClient);
+            NewMap.CharactersOnMap.Add(prmClient);
+            Map LastMap = prmClient.account.character.Map;
+
+            for (int i = 0; i < LastMap.CharactersOnMap.Count; i++)
+            {
+                LastMap.CharactersOnMap[i].send($"GM|-{prmClient.account.character.id}");
+            }
+            prmClient.account.character.Map = NewMap;
+            prmClient.account.character.mapID = NewMap.Id;
+            prmClient.account.character.cellID = CellID;
+            prmClient.send($"GDM|{NewMap.Id}|{NewMap.CreateTime}|{NewMap.DataKey}");
+
+        }
+
         [PacketAttribute("GKE0")]
         public void SwitchMoving(Network.listenClient prmClient, string prmPacket)
         {
@@ -159,7 +185,9 @@ namespace LeafWorld.Game.Map
                 {
                     if (var == parthTemp[i])
                     {
-                        prmClient.account.character.cellID = parthTemp[i]; ;
+                        prmClient.account.character.cellID = parthTemp[i];
+                        prmClient.account.character.WaitMoving = DateTimeOffset.Now.ToUnixTimeSeconds()-1;
+                        prmClient.account.character.IsAvailable = true;
                         for (int x = 0; x < prmClient.account.character.Map.CharactersOnMap.Count; x++)
                         {
                             prmClient.account.character.Map.CharactersOnMap[x].send($"GA0;1;{prmClient.account.character.id};b{Util.CellToChar(prmClient.account.character.cellID)}");
