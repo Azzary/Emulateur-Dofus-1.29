@@ -39,7 +39,7 @@ namespace LeafBot.Loging
         public void GetCharacterInformation(Client.Client client, string Packet, List<string> LastPacket)
         {
             client.send("GC1");
-            client.send("BD");
+            //client.send("BD");
         }
 
         [PacketAttribute("As")]
@@ -47,20 +47,13 @@ namespace LeafBot.Loging
         {
             client.send("BD");
         }
+
+
         [PacketAttribute("GDM")]
         public void GetMap(Client.Client client, string Packet, List<string> LastPacket)
         {
-            client.send("rpong3");
-            client.send("Ir742;556;2");
             client.send("GI");
         }
-
-        [PacketAttribute("rpong1")]
-        public void rpong(Client.Client client, string Packet, List<string> LastPacket)
-        {
-            client.send("rpong1\0rpong2");
-        }
-
 
 
         private static Random random = new Random();
