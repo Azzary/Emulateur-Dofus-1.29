@@ -26,7 +26,7 @@ namespace LeafWorld.Game.Map
 
             if (DateTimeOffset.Now.ToUnixTimeSeconds() < prmClient.account.character.WaitMoving)
             {
-                prmClient.send("BN");
+                
                 return;
             }
             prmPacket = prmPacket.Substring(5).Split('\0')[0];

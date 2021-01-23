@@ -11,14 +11,15 @@ namespace LeafWorld.Game.Map
         [PacketAttribute("BD")]
         public void SendMap(Network.listenClient prmClient, string prmPacket)
         {
-            if (prmClient.account.statue == 0)
+            if (prmClient.account.statue != 0)
             {
-                prmClient.send("GCK|1");
+               
                 prmClient.send(Character.GestionCharacter.createAsPacket(prmClient));
                 prmClient.account.statue = 1;
             }
             else if (prmClient.database.tablemap.Maps.ContainsKey(prmClient.account.character.mapID))
                 {
+                    prmClient.send("GCK|1");
                     Map map = prmClient.database.tablemap.Maps[prmClient.account.character.mapID];
                     if (!map.CharactersOnMap.Contains(prmClient))
                         map.CharactersOnMap.Add(prmClient);
@@ -28,15 +29,6 @@ namespace LeafWorld.Game.Map
             }
         }
 
-
-
-        [PacketAttribute("rpong2")]
-        public void ConfirmMap(Network.listenClient prmClient, string prmPacket)
-        {
-            prmClient.send("ÃR");
-           CreateMapPacketInfo(prmClient);
-
-        }
 
         public static void CreateMapPacketInfo(LeafWorld.Network.listenClient prmClient)
         {
@@ -74,7 +66,7 @@ namespace LeafWorld.Game.Map
                 }
             }
             prmClient.send("GDK");
-            prmClient.send("fC0\0GDD32\0rpong3");
+            prmClient.send("fC0\0GDD32");
         }
 
         [PacketAttribute("GI")]
@@ -83,7 +75,8 @@ namespace LeafWorld.Game.Map
 
             if (prmClient.account.character.fight.InFight == 0)
             {
-                prmClient.send("rpong1\0rpong2");
+                prmClient.send("ÃR");
+                CreateMapPacketInfo(prmClient);
             }
             else
             {
