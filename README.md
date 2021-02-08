@@ -4,14 +4,19 @@
 LeafEmu
 ========
 
-
-
 open-sources emulator for Dofus Retro
 He is written in C#
 
+## **Switching to private version**
 
+### If you want to follow the progress :https://trello.com/b/4rdSUNk1/leafemu
+  
+    
+      
+        
+          
 
-
+## Ajout d'un bot pour tester les performances (n'est pas fini) 
 
 ## ChangeLog Auth:  
 ---> Ajout de la connexion  
