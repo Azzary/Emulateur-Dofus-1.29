@@ -12,18 +12,16 @@ He is written in C#
 ### If you want to follow the progress :https://trello.com/b/4rdSUNk1/leafemu
   
     
-      
-        
-          
 
-## Ajout d'un bot pour tester les performances (n'est pas fini) 
-
+## Adding a bot to test performance (not finished on this version)
+-------> After test 3000 connection on the world server with the bot (all in the same machine and in the same map, but the bot consumes too much resource (memory) more than the 
+world server ...)
 ## ChangeLog Auth:  
 ---> Ajout de la connexion  
 ---> Ajout de fil d'attente  
 ---> Gestion des MDP/Ban...   
 ---> Affichage des server  
----> Affichage du nb de personnage  
+---> Affichage du nb de personnages  
 ---> Connection au server de jeu  
 
 ## ChangeLog World:  
@@ -33,18 +31,18 @@ He is written in C#
 ------> Ajout des téléportations sur les maps  
 ------> Gestion des autre personnages sur la map  
 ------> Affichage du combat sur la map  
----> Chat:  
-------> Destion des different chats  
+---> tchat:  
+------> Destion des different tchat  
 ------> Affichage des message  
 ---> Personnage:  
-------> Ajout des créations / suppressions / sélections personnages  
+------> Ajout des créations / suppressions / sélections des personnages  
 ------> Ajout des stats (vie, force, intel, agi, sagesse)  
 ------> Map de depart pour toute les classes  
 ---> Items:  
 ------> Items dans l'inventaire  
-------> Sauvgarde del'inventaire  
+------> Sauvgarde de l'inventaire  
 ------> Des/Equiper des items  
-------> Gestion des stats des item  si equiper (pas tout)  
+------> Gestion des stats des items  si equiper (pas tout)  
 ------> Affichage des equipements sur la map  
 ------> Affichage des equipements en combat  
 ---> Sort:    
@@ -72,13 +70,6 @@ He is written in C#
 ------> Imposible de faire une action si tour == false  
     
     
-## To-Do:  
-Verif item type pour l'equiper  
-Utilisation des sorts  
-Gestion la position des Sorts (Ajouter dans la DB)     
-Ajout du Multi-Server(Need 2/3 update)    
-Ajouter Les rez/prospection/Esquive PA - PM    
-pnj  
 
 
     
