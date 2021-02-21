@@ -5,7 +5,7 @@ LeafEmu
 ========
 
 open-sources emulator for Dofus Retro
-He is written in C#
+written in C# using reflexion
 
 ## **Switching to private version**
 
