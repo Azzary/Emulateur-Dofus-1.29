@@ -5,7 +5,7 @@ LeafEmu
 ========
 
 open-sources emulator for Dofus Retro
-written in C# using reflexion
+written in C#
 
 ## **Switching to private version**
 
@@ -14,7 +14,7 @@ written in C# using reflexion
     
 
 ## Adding a bot to test performance (not finished on this version)
-After test 3000 connection on the world server with the bot (all in the same machine and in the same map, but the bot consumes too much resource (memory) more than the 
+
 world server ...)
 ## ChangeLog Auth:  
 ---> Ajout de la connexion  
